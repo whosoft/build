@@ -131,7 +131,7 @@ A.PolygonUtil = {
  * @constructor
  */
 A.Connector = A.Base.create('line', A.Base, [], {
-    SERIALIZABLE_ATTRS: ['color', 'lazyDraw', 'name', 'shapeSelected', 'shapeHover', /*SHAPE,*/ 'p1', 'p2'],
+    SERIALIZABLE_ATTRS: ['color', 'lazyDraw', 'name', 'default', 'shapeSelected', 'shapeHover', /*SHAPE,*/ 'p1', 'p2'],
 
     shape: null,
     shapeArrow: null,
@@ -291,7 +291,17 @@ A.Connector = A.Base.create('line', A.Base, [], {
                 }
             }),
             name: strings.name
-        }];
+        }, {
+                attributeName: 'default',
+                editor: new A.RadioCellEditor({
+                    options: {
+                        'true': 'True',
+                        'false': 'False'
+                    }
+                }),
+                formatter: A.bind(instance._booleanFormatter, instance),
+                name: 'Default'
+            }];
     },
 
     /**
@@ -358,6 +368,16 @@ A.Connector = A.Base.create('line', A.Base, [], {
         return output;
     },
 
+    toJSON2: function() {
+        var instance = this;
+        var output = {};
+
+        output['name'] = instance.get('name');
+        output['target'] = instance.get('transition').target;
+        output['default'] = instance.get('default')?'true':'false';
+
+        return output;
+    },
     /**
      * Converts a coordinate to X and Y positions.
      *
@@ -369,6 +389,12 @@ A.Connector = A.Base.create('line', A.Base, [], {
 
         return instance._offsetXY(coord, 1);
     },
+
+    _booleanFormatter: function(o) {
+        var instance = this;
+        return A.DataType.Boolean.parse(o.data.value) ? 'True' : 'False';
+    },
+
 
     /**
      * Fires after `name` attribute value change.
@@ -492,6 +518,10 @@ A.Connector = A.Base.create('line', A.Base, [], {
         }
 
         instance.set('selected', !selected);
+        //alert(builder.getNodesByTransitionSource(instance.get('transition').source) );
+        //alert(builder.getNodesByTransitionSource(instance.get('transition').source).get('description') );
+        //alert(instance.get('nodeName')._yuid);
+        //alert( ( instance.get('transition').source )+ JSON.stringify(instance.toJSON2()) );
 
         event.halt();
     },
@@ -760,6 +790,11 @@ A.Connector = A.Base.create('line', A.Base, [], {
             },
             validator: isString
         },
+        default: {
+        	  setter: A.DataType.Boolean.parse,
+            value: true
+        },
+        
 
         /**
          * The connector node name.
