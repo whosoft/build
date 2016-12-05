@@ -568,6 +568,33 @@ var DiagramBuilder = A.Component.create({
         },
 
         /**
+         * Returns a One nodes by its transition property.
+         *
+         * @method getNodesByTransitionProperty
+         * @param property
+         * @param value
+         */
+        getNodesByTransitionSource: function( value) {
+            var instance = this,
+                node = false,
+                transitions;
+
+            instance.get('fields').each(function(diagramNode) {
+                transitions = diagramNode.get('transitions');
+
+                AArray.each(transitions.values(), function(transition) {
+                    if (transition['source'] === value) {
+                        node=diagramNode;
+                        return false;
+                    }
+                });
+                
+                if(node)return diagramNode;
+            });
+
+            return node;
+        },
+        /**
          * Returns a collection of selected connectors.
          *
          * @method getSelectedConnectors
@@ -738,6 +765,41 @@ var DiagramBuilder = A.Component.create({
             return output;
         },
 
+        /**
+         * Converts fields to JSON format.
+         *
+         * @method toJSON
+         * @return {Object}
+         */
+        toJSON2: function() {
+            var instance = this;
+
+            var output = {
+                nodes: []
+            };
+
+            instance.get('fields').each(function(diagramNode) {
+                var node = {'name':diagramNode.get('name'),'type':diagramNode.get('type'),'description':diagramNode.get('description'),'uuid':diagramNode.get('uuid'),
+                        transitions: []
+                    },
+                    transitions = diagramNode.get('transitions');
+
+                
+                //node['name'] = diagramNode.get('name');
+                //node['type'] = diagramNode.get('type');
+
+                // serialize node transitions
+                AArray.each(transitions.values(), function(transition) {
+                    var connector = diagramNode.getConnector(transition);
+                    //transition.connector = connector.toJSON2();
+                    node.transitions.push(connector.toJSON2());
+                });
+
+                output.nodes.push(node);
+            });
+
+            return output;
+        },
         /**
          * Clears connectors selection.
          *
@@ -976,6 +1038,16 @@ var DiagramBuilder = A.Component.create({
             instance._onNodeEdit(event);
 
             event.stopPropagation();
+            
+            //alert(diagramNode.toString());
+
+            var urlopen = "/node/5?add=kaleo-"+(diagramNode.get('type')=='end'?'state':diagramNode.get('type'))+"&nodename="+diagramNode.get('name')+"&nodeUUID="+diagramNode.get('uuid');
+            if(diagramNode.get('type')!='start' ){
+              window.document.getElementById('onNodeClickFrame').style.display='none';
+              A.one('#loading_indicator').show();
+              window.document.getElementById('onNodeClickFrame').src=urlopen;
+            }
+            
         },
 
         /**
@@ -1240,6 +1312,7 @@ A.namespace('DiagramBuilder.types').task = A.DiagramNodeTask;
     "requires": [
         "overlay",
         "aui-map",
+        "aui-io-request",
         "aui-property-builder",
         "aui-diagram-builder-connector",
         "aui-property-builder-settings",
