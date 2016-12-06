@@ -368,16 +368,20 @@ A.Connector = A.Base.create('line', A.Base, [], {
         return output;
     },
 
-    toJSON2: function() {
+    ttoJSON2: function() {
         var instance = this;
         var output = {};
 
+        var builder = instance.get('builder');
         output['name'] = instance.get('name');
         output['target'] = instance.get('transition').target;
+        output['source_uuid'] = builder.getNodesByTransitionSource(instance.get('transition').source).get('uuid');
+        output['target_uuid'] = builder.getNodesByTransitionTarget(instance.get('transition').target).get('uuid');
         output['default'] = instance.get('default')?'true':'false';
 
         return output;
     },
+
     /**
      * Converts a coordinate to X and Y positions.
      *
