@@ -1069,7 +1069,7 @@ var DiagramBuilder = A.Component.create({
             
             //alert(diagramNode.toString());
 
-            var urlopen = "/node/5?add=kaleo-"+(diagramNode.get('type')=='end'?'state':diagramNode.get('type'))+"&nodename="+diagramNode.get('name')+"&nodeUUID="+diagramNode.get('uuid');
+            var urlopen = "/node/5?add=kaleo-"+(diagramNode.get('type')=='end'?'state':diagramNode.get('type'))+"&nodename="+diagramNode.get('name')+"&nodeUUID="+diagramNode.get('uuid')+"&xy="+diagramNode.get('xy');
             if(diagramNode.get('type')!='start' ){
               window.document.getElementById('onNodeClickFrame').style.display='none';
               A.one('#loading_indicator').show();
