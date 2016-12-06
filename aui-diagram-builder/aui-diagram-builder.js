@@ -594,6 +594,34 @@ var DiagramBuilder = A.Component.create({
 
             return node;
         },
+        
+        /**
+         * Returns a One nodes by its transition property.
+         *
+         * @method getNodesByTransitionProperty
+         * @param property
+         * @param value
+         */
+        getNodesByTransitionTarget: function( value) {
+            var instance = this,
+                node = false,
+                transitions;
+
+            instance.get('fields').each(function(diagramNode) {
+                transitions = diagramNode.get('transitions');
+
+                AArray.each(transitions.values(), function(transition) {
+                    if (transition['target'] === value) {
+                        node=diagramNode;
+                        return false;
+                    }
+                });
+                
+                if(node)return diagramNode;
+            });
+
+            return node;
+        },
         /**
          * Returns a collection of selected connectors.
          *
