@@ -374,6 +374,7 @@ A.Connector = A.Base.create('line', A.Base, [], {
 
         var builder = instance.get('builder');
         output['name'] = instance.get('name');
+        output['source'] = instance.get('transition').source;
         output['target'] = instance.get('transition').target;
         output['source_uuid'] = builder.getNodesByTransitionSource(instance.get('transition').source).get('uuid');
         output['target_uuid'] = builder.getNodesByTransitionTarget(instance.get('transition').target).get('uuid');
