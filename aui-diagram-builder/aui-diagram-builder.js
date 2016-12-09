@@ -995,6 +995,12 @@ var DiagramBuilder = A.Component.create({
 
             if (diagramNode && instance.isFieldsDrag(drag)) {
                 diagramNode.set('xy', diagramNode.getNodeCoordinates());
+                		var urlopen = "/node/5?add=kaleo-"+(diagramNode.get('type')=='end'?'state':diagramNode.get('type'))+"&nodename="+diagramNode.get('name')+"&nodeUUID="+diagramNode.get('uuid')+"&xy="+diagramNode.get('xy');
+						if(diagramNode.get('type')!='start' ){
+						  window.document.getElementById('onNodeClickFrame').style.display='none';
+						  A.one('#loading_indicator').show();
+						  window.document.getElementById('onNodeClickFrame').src=urlopen;
+						}
             }
         },
 
